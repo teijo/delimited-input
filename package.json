@@ -4,11 +4,12 @@
   "description": "Delimited input fields",
   "main": "index.js",
   "devDependencies": {
-    "mocha": "^3.2.0",
-    "chai": "^3.5.0"
+    "chai": "^3.5.0",
+    "livereload": "^0.6.0",
+    "mocha": "^3.2.0"
   },
   "scripts": {
-    "test": "mocha"
+    "start": "livereload"
   },
   "author": "Teijo Laine",
   "license": "MIT"
