@@ -36,7 +36,7 @@
     const end = el.selectionEnd;
     const rightOfSeparator = start > 0 && value[start - 1] === separator[separator.length - 1];
     const separatorWillBeRemovedLeftOfSelection = value[1] === separator[0];
-    const caretPosition = start - 1;
+    const caretPosition = Math.max(0, start - 1);
 
     return {
       caret: caretPosition - (separatorWillBeRemovedLeftOfSelection ? 1 : 0),
@@ -102,6 +102,17 @@
 
       it('sets delimiter after first number', function() {
         assert.equal(value(), '1,234');
+      });
+
+      describe('entering backspace in front of value', function() {
+        beforeEach(function() {
+          caret(0);
+          kb.dispatchEventsForAction('backspace', input());
+        });
+
+        it('does not modify input', function() {
+          assert.equal(value(), '1,234');
+        });
       });
     });
 
