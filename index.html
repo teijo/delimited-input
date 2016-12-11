@@ -7,13 +7,14 @@
     }
   </style>
   <script src="http://localhost:35729/livereload.js?snipver=1"></script>
+  <script src="node_modules/keysim/dist/keysim.js"></script>
   <script src="node_modules/chai/chai.js"></script>
   <script src="node_modules/mocha/mocha.js"></script>
   <link  href="node_modules/mocha/mocha.css" rel="stylesheet" />
 </head>
 <body>
 <div id="mocha"></div>
-<input id="num" type="text" value="1234567"/> -> <input id="num_out" type="text" readonly disabled/>
+<input id="num" type="text"/> -> <input id="num_out" type="text" readonly disabled/>
 <script>
   function reverse(string) {
     return string.split("").reverse().join("");
@@ -34,17 +35,15 @@
   const el = document.getElementById("num");
   const thousandSeparator = ",";
 
-  el.value = format(el.value);
-  out.value = strip(el.value);
-
   const listener = function(event) {
     const priorPosition = event.target.selectionStart;
+    const key = String.fromCharCode(event.keyCode);
 
-    if (/[0-9]/.test(event.key)) {
+    if (/[0-9]/.test(key)) {
       event.preventDefault();
 
       const value = event.target.value;
-      event.target.value = format(inject(value, event.key, priorPosition));
+      event.target.value = format(inject(value, key, priorPosition));
 
       const shift = event.target.value.length - value.length;
 
@@ -62,9 +61,37 @@
 
   const assert = chai.assert;
 
-  describe('mocha', function() {
-    it('does assert with chai', function() {
-      assert.isOk(true);
+  function input() {
+    return document.getElementById('num');
+  }
+  function value() {
+    return input().value;
+  }
+
+  describe('Input', function() {
+    const kb = Keysim.Keyboard.US_ENGLISH;
+    beforeEach(function() {
+      input().value = '';
+    });
+
+    describe('value for thousand', function() {
+      beforeEach(function() {
+        kb.dispatchEventsForInput('1234', input());
+      });
+
+      it('sets delimiter after first number', function() {
+        assert.equal(value(), '1,234');
+      });
+    });
+
+    describe('value for ten thousand', function() {
+      beforeEach(function() {
+        kb.dispatchEventsForInput('12345', input());
+      });
+
+      it('sets delimiter after second number', function() {
+        assert.equal(value(), '12,345');
+      });
     });
   });
 
