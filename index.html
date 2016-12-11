@@ -35,7 +35,12 @@
     const start = el.selectionStart;
     const end = el.selectionEnd;
     const nextToSeparator = start > 0 && value[start - 1] === separator[separator.length - 1];
-    return value.slice(0, start - 1 - (nextToSeparator ? separator.length : 0)) + value.slice(end, value.length);
+    const caretPosition = start - 1 - (nextToSeparator ? separator.length : 0);
+
+    return {
+      caret: caretPosition,
+      value: value.slice(0, caretPosition) + value.slice(end, value.length)
+    };
   }
 
   const out = document.getElementById("num_out");
@@ -58,7 +63,9 @@
       event.target.selectionEnd = priorPosition + shift;
     } else if (event.keyCode === 8) {
       event.preventDefault();
-      event.target.value = format(backspace(event.target, thousandSeparator));
+      const result = backspace(event.target, thousandSeparator);
+      event.target.value = format(result.value);
+      event.target.selectionStart = event.target.selectionEnd = result.caret;
     }
 
     out.value = strip(event.target.value);
@@ -122,6 +129,14 @@
           it('removes 1', function() {
             assert.equal(value(), '234,567');
           });
+
+          it('selection start before value', function() {
+            assert.equal(0, input().selectionStart);
+          });
+
+          it('selection length is zero', function() {
+            assert.equal(input().selectionStart, input().selectionEnd);
+          });
         });
 
         describe('second separator', function() {
@@ -133,6 +148,14 @@
           it('removes 4', function() {
             assert.equal(value(), '123,567');
           });
+
+          it('selection start at last character', function() {
+            assert.equal(4, input().selectionStart);
+          });
+
+          it('selection length is zero', function() {
+            assert.equal(input().selectionStart, input().selectionEnd);
+          });
         });
 
         describe('last character', function() {
@@ -143,6 +166,14 @@
 
           it('removes 7', function() {
             assert.equal(value(), '123,456');
+          });
+
+          it('selection start at last character', function() {
+            assert.equal(input().selectionStart, value().length);
+          });
+
+          it('selection length is zero', function() {
+            assert.equal(input().selectionStart, input().selectionEnd);
           });
         });
       });
