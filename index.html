@@ -30,6 +30,10 @@
   function strip(string) {
     return string.replace(/[^0-9]/g, '');
   }
+  function backspace(el) {
+    var value = el.value;
+    return value.slice(0, el.selectionStart - 1) + value.slice(el.selectionEnd, value.length);
+  }
 
   const out = document.getElementById("num_out");
   const el = document.getElementById("num");
@@ -49,6 +53,8 @@
 
       event.target.selectionStart = priorPosition + shift;
       event.target.selectionEnd = priorPosition + shift;
+    } else if (event.keyCode === 8) {
+      event.target.value = format(backspace(event.target));
     }
 
     out.value = strip(event.target.value);
@@ -67,9 +73,12 @@
   function value() {
     return input().value;
   }
+  function caret(index) {
+    input().selectionStart = input().selectionEnd = index;
+  }
 
+  const kb = Keysim.Keyboard.US_ENGLISH;
   describe('Input', function() {
-    const kb = Keysim.Keyboard.US_ENGLISH;
     beforeEach(function() {
       input().value = '';
     });
@@ -91,6 +100,36 @@
 
       it('sets delimiter after second number', function() {
         assert.equal(value(), '12,345');
+      });
+    });
+
+    describe('value for 1234567', function() {
+      beforeEach(function() {
+        kb.dispatchEventsForInput('1234567', input());
+      });
+
+      describe('erasing', function() {
+        describe('first character', function() {
+          beforeEach(function() {
+            caret(1);
+            kb.dispatchEventsForAction('backspace', input());
+          });
+
+          it('removes 1', function() {
+            assert.equal(value(), '234,567');
+          });
+        });
+
+        describe('last character', function() {
+          beforeEach(function() {
+            caret(value().length);
+            kb.dispatchEventsForAction('backspace', input());
+          });
+
+          it('removes 7', function() {
+            assert.equal(value(), '123,456');
+          });
+        });
       });
     });
   });
