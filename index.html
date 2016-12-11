@@ -30,9 +30,12 @@
   function strip(string) {
     return string.replace(/[^0-9]/g, '');
   }
-  function backspace(el) {
-    var value = el.value;
-    return value.slice(0, el.selectionStart - 1) + value.slice(el.selectionEnd, value.length);
+  function backspace(el, separator) {
+    const value = el.value;
+    const start = el.selectionStart;
+    const end = el.selectionEnd;
+    const nextToSeparator = start > 0 && value[start - 1] === separator[separator.length - 1];
+    return value.slice(0, start - 1 - (nextToSeparator ? separator.length : 0)) + value.slice(end, value.length);
   }
 
   const out = document.getElementById("num_out");
@@ -54,7 +57,8 @@
       event.target.selectionStart = priorPosition + shift;
       event.target.selectionEnd = priorPosition + shift;
     } else if (event.keyCode === 8) {
-      event.target.value = format(backspace(event.target));
+      event.preventDefault();
+      event.target.value = format(backspace(event.target, thousandSeparator));
     }
 
     out.value = strip(event.target.value);
@@ -103,12 +107,12 @@
       });
     });
 
-    describe('value for 1234567', function() {
+    describe('value for 1,234,567', function() {
       beforeEach(function() {
         kb.dispatchEventsForInput('1234567', input());
       });
 
-      describe('erasing', function() {
+      describe('entering backspace after', function() {
         describe('first character', function() {
           beforeEach(function() {
             caret(1);
@@ -117,6 +121,17 @@
 
           it('removes 1', function() {
             assert.equal(value(), '234,567');
+          });
+        });
+
+        describe('second separator', function() {
+          beforeEach(function() {
+            caret(6);
+            kb.dispatchEventsForAction('backspace', input());
+          });
+
+          it('removes 4', function() {
+            assert.equal(value(), '123,567');
           });
         });
 
