@@ -6,8 +6,12 @@
       text-align: right;
     }
   </style>
+  <script src="node_modules/chai/chai.js"></script>
+  <script src="node_modules/mocha/mocha.js"></script>
+  <link  href="node_modules/mocha/mocha.css" rel="stylesheet" />
 </head>
 <body>
+<div id="mocha"></div>
 <input id="num" type="text" value="1234567"/> -> <input id="num_out" type="text" readonly disabled/>
 <script>
   function reverse(string) {
@@ -51,6 +55,19 @@
   };
 
   el.addEventListener("keydown", listener);
+</script>
+<script>
+  mocha.setup('bdd');
+
+  const assert = chai.assert;
+
+  describe('mocha', function() {
+    it('does assert with chai', function() {
+      assert.isOk(true);
+    });
+  });
+
+  mocha.run();
 </script>
 </body>
 </html>
