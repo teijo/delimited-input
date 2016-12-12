@@ -34,9 +34,10 @@
     const value = el.value;
     const start = el.selectionStart;
     const end = el.selectionEnd;
+    const length = end - start;
     const rightOfSeparator = start > 0 && value[start - 1] === separator[separator.length - 1];
     const separatorWillBeRemovedLeftOfSelection = value[1] === separator[0];
-    const caretPosition = Math.max(0, start - 1);
+    const caretPosition = Math.max(0, start - (length ? 0  : 1));
 
     return {
       caret: caretPosition - (separatorWillBeRemovedLeftOfSelection ? 1 : 0),
@@ -94,6 +95,10 @@
   function caret(index) {
     input().selectionStart = input().selectionEnd = index;
   }
+  function selection(index, length) {
+    input().selectionStart = index;
+    input().selectionEnd = index + length;
+  }
 
   const kb = Keysim.Keyboard.US_ENGLISH;
   describe('Input', function() {
@@ -122,13 +127,52 @@
       });
     });
 
-    describe('value for ten thousand', function() {
+    describe('value for 12,345', function() {
       beforeEach(function() {
         kb.dispatchEventsForInput('12345', input());
       });
 
       it('sets delimiter after second number', function() {
         assert.equal(value(), '12,345');
+      });
+
+      describe('selection over 2,3', function() {
+        describe('entering backspace', function() {
+          beforeEach(function() {
+            selection(1, 3);
+            kb.dispatchEventsForAction('backspace', input());
+          });
+
+          it('leaves 145', function() {
+            assert.equal(value(), '145');
+          });
+        });
+      });
+
+      describe('selection over 12', function() {
+        describe('entering backspace', function() {
+          beforeEach(function() {
+            selection(0, 2);
+            kb.dispatchEventsForAction('backspace', input());
+          });
+
+          it('leaves 345', function() {
+            assert.equal(value(), '345');
+          });
+        });
+      });
+
+      describe('selection over ,', function() {
+        describe('entering backspace', function() {
+          beforeEach(function() {
+            selection(2, 1);
+            kb.dispatchEventsForAction('backspace', input());
+          });
+
+          it('does not modify the input', function() {
+            assert.equal(value(), '12,345');
+          });
+        });
       });
     });
 
