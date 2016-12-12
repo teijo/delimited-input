@@ -40,12 +40,13 @@
     const start = el.selectionStart;
     const end = el.selectionEnd;
     const length = end - start;
+    const separatorsSelected = (value.slice(start, end).match(/,/g) || []).length;
     const rightOfSeparator = start > 0 && value[start - 1] === separator[separator.length - 1];
     const separatorWillBeRemovedLeftOfSelection = value[1] === separator[0];
     const caretPosition = Math.max(0, start - (length ? 0  : 1));
 
     return {
-      caret: caretPosition - (separatorWillBeRemovedLeftOfSelection ? 1 : 0),
+      caret: caretPosition - (separatorWillBeRemovedLeftOfSelection ? 1 : 0) + (separatorsSelected ? 1 : 0),
       value: value.slice(0, caretPosition - (rightOfSeparator ? separator.length : 0)) + value.slice(end, value.length)
     };
   }
@@ -152,6 +153,23 @@
 
           it('leaves 145', function() {
             assert.equal(value(), '145');
+          });
+        });
+      });
+
+      describe('selection over ,3', function() {
+        describe('entering backspace', function() {
+          beforeEach(function() {
+            selection(2, 2);
+            kb.dispatchEventsForAction('backspace', input());
+          });
+
+          it('leaves 1,245', function() {
+            assert.equal(value(), '1,245');
+          });
+
+          it('leaves cursor right of 2', function() {
+            assert.equal(input().selectionStart, 3);
           });
         });
       });
