@@ -14,7 +14,12 @@
 </head>
 <body>
 <div id="mocha"></div>
-<input id="num" type="text"/> -> <input id="num_out" type="text" readonly disabled/>
+<div>
+  <input id="num" type="text"/> -> <input id="num_out" type="text" readonly disabled/>
+</div>
+<div>
+  <input id="start" type="text" readonly disabled/> -> <input id="end" type="text" readonly disabled/>
+</div>
 <script>
   function reverse(string) {
     return string.split("").reverse().join("");
@@ -73,6 +78,8 @@
     return function(event) {
       const result = func(event);
       document.getElementById("num_out").value = strip(event.target.value);
+      document.getElementById("start").value = event.target.selectionStart;
+      document.getElementById("end").value = event.target.selectionEnd;
       return result;
     };
   };
