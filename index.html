@@ -24,10 +24,14 @@
   function reverse(string) {
     return string.split("").reverse().join("");
   }
-  function format(value, separator) {
-    return value.length === 0
-        ? ""
-        : reverse(reverse(value.replace(/,/g, "")).match(/.{1,3}/g).join(separator));
+  function formatter(separator, spread) {
+    const re = new RegExp(".{1," + spread + "}", "g");
+
+    return function(value) {
+      return value.length === 0
+          ? ""
+          : reverse(reverse(value.replace(/,/g, "")).match(re).join(separator));
+    }
   }
   function inject(string, character, positionFromLeft) {
     return (string.slice(0, positionFromLeft) + character + string.slice(positionFromLeft));
@@ -56,7 +60,9 @@
     };
   }
 
-  const DelimitedInput = function(separator) {
+  const DelimitedInput = function(separator, spread) {
+    const format = formatter(separator, spread);
+
     return function(event) {
       const priorPosition = event.target.selectionStart;
       const key = String.fromCharCode(event.keyCode);
@@ -65,7 +71,7 @@
         event.preventDefault();
 
         const value = event.target.value;
-        event.target.value = format(inject(value, key, priorPosition), separator);
+        event.target.value = format(inject(value, key, priorPosition));
 
         const shift = event.target.value.length - value.length;
 
@@ -74,7 +80,7 @@
       } else if (event.keyCode === 8) {
         event.preventDefault();
         const result = backspace(event.target, separator);
-        const newValue = format(result.value, separator);
+        const newValue = format(result.value);
         event.target.value = newValue;
         event.target.selectionStart = event.target.selectionEnd = newValue.length - result.positionFromEnd;
       }
@@ -93,7 +99,7 @@
 
   document
       .getElementById("num")
-      .addEventListener("keydown", captureResult(DelimitedInput(",")));
+      .addEventListener("keydown", captureResult(DelimitedInput(",", 3)));
 </script>
 <script>
   mocha.setup('bdd');
