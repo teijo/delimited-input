@@ -15,6 +15,18 @@ support for formatting rules already.
 - Product code: writing `abj39lv2jvk3` show like this `abj3-9lv2-jvk3`
 
 
+## Example usage
+
+Auto-format user input:
+
+```javascript
+var thousandsDelimiter = DelimitedInput(",", 3);
+document
+  .getElementById("numeric_input")
+  .addEventListener("keydown", thousandsDelimiter);
+```
+
+
 ## Development
 
 ```
