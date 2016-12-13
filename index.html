@@ -37,17 +37,22 @@
   }
   function backspace(el, separator) {
     const value = el.value;
-    const start = el.selectionStart;
-    const end = el.selectionEnd;
-    const length = end - start;
-    const separatorsSelected = (value.slice(start, end).match(/,/g) || []).length;
-    const rightOfSeparator = start > 0 && value[start - 1] === separator[separator.length - 1];
-    const separatorWillBeRemovedLeftOfSelection = value[1] === separator[0];
-    const caretPosition = Math.max(0, start - (length ? 0  : 1));
+
+    const selStart = el.selectionStart;
+    const selEnd = el.selectionEnd;
+    const selLength = selEnd - selStart;
+
+    const cursorRightOfSeparator = selStart > 0 && value[selStart - 1] === separator[separator.length - 1];
+    const cursorPosition = Math.max(0, selStart - (selLength ? 0  : 1));
+
+    const head = value.slice(0, cursorPosition - (cursorRightOfSeparator
+            ? separator.length // Erase char before separator if cursor right after of separator
+            : 0));
+    const tail = value.slice(selEnd, value.length);
 
     return {
-      caret: caretPosition - (separatorWillBeRemovedLeftOfSelection ? 1 : 0) + (separatorsSelected ? 1 : 0),
-      value: value.slice(0, caretPosition - (rightOfSeparator ? separator.length : 0)) + value.slice(end, value.length)
+      positionFromEnd: value.length - selEnd, // Input modification will reformat only for the beginning of the string
+      value: head + tail
     };
   }
 
@@ -69,8 +74,9 @@
       } else if (event.keyCode === 8) {
         event.preventDefault();
         const result = backspace(event.target, separator);
-        event.target.value = format(result.value, separator);
-        event.target.selectionStart = event.target.selectionEnd = result.caret;
+        const newValue = format(result.value, separator);
+        event.target.value = newValue;
+        event.target.selectionStart = event.target.selectionEnd = newValue.length - result.positionFromEnd;
       }
     }
   };
@@ -154,6 +160,10 @@
           it('leaves 145', function() {
             assert.equal(value(), '145');
           });
+
+          it('leaves cursor right of 1', function() {
+            assert.equal(input().selectionStart, 1);
+          });
         });
       });
 
@@ -183,6 +193,10 @@
 
           it('leaves 345', function() {
             assert.equal(value(), '345');
+          });
+
+          it('leaves cursor left of 3', function() {
+            assert.equal(input().selectionStart, 0);
           });
         });
       });
