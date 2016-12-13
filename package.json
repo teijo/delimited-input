@@ -1,8 +1,12 @@
 {
   "name": "delimited-input",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Delimited input fields",
-  "main": "index.js",
+  "keywords": [
+    "delimited", "delimiter", "input", "formatting", "comma", "dash",
+    "thousand", "thousands", "digit", "separator", "separated", "grouping"
+  ],
+  "main": "delimited-input.js",
   "devDependencies": {
     "chai": "^3.5.0",
     "keysim": "^2.0.0",
