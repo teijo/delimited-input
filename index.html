@@ -39,6 +39,12 @@
   function strip(string) {
     return string.replace(/[^0-9]/g, '');
   }
+  function subtract(string, start, end) {
+    const head = string.slice(0, start);
+    const tail = string.slice(end, string.length);
+
+    return head + tail;
+  }
   function backspace(el, separator) {
     const value = el.value;
 
@@ -49,14 +55,12 @@
     const cursorRightOfSeparator = selStart > 0 && value[selStart - 1] === separator[separator.length - 1];
     const cursorPosition = Math.max(0, selStart - (selLength ? 0  : 1));
 
-    const head = value.slice(0, cursorPosition - (cursorRightOfSeparator
-            ? separator.length // Erase char before separator if cursor right after of separator
-            : 0));
-    const tail = value.slice(selEnd, value.length);
-
     return {
       positionFromEnd: value.length - selEnd, // Input modification will reformat only for the beginning of the string
-      value: head + tail
+      value: subtract(value, cursorPosition - (cursorRightOfSeparator
+              ? separator.length // Erase char before separator if cursor right after of separator
+              : 0),
+          selEnd)
     };
   }
 
@@ -70,7 +74,7 @@
       if (/[0-9]/.test(key)) {
         event.preventDefault();
 
-        const value = event.target.value;
+        const value = subtract(event.target.value, event.target.selectionStart, event.target.selectionEnd);
         event.target.value = format(inject(value, key, priorPosition));
 
         const shift = event.target.value.length - value.length;
@@ -191,9 +195,12 @@
       });
 
       describe('selection over 12', function() {
+        beforeEach(function() {
+          selection(0, 2);
+        });
+
         describe('entering backspace', function() {
           beforeEach(function() {
-            selection(0, 2);
             kb.dispatchEventsForAction('backspace', input());
           });
 
@@ -203,6 +210,20 @@
 
           it('leaves cursor left of 3', function() {
             assert.equal(input().selectionStart, 0);
+          });
+        });
+
+        describe('entering 9', function() {
+          beforeEach(function() {
+            kb.dispatchEventsForInput('9', input());
+          });
+
+          it('leaves 9,345', function() {
+            assert.equal(value(), '9,345');
+          });
+
+          it('leaves cursor right of ,', function() {
+            assert.equal(input().selectionStart, 1);
           });
         });
       });
