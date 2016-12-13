@@ -1,33 +1,60 @@
-function reverse(string) {
-  return string.split("").reverse().join("");
+function DelimitedInput(separator, spread) {
+  const format = DelimitedInput.formatter(separator, spread);
+
+  return function(event) {
+    const priorPosition = event.target.selectionStart;
+    const key = String.fromCharCode(event.keyCode);
+
+    if (/[0-9]/.test(key)) {
+      event.preventDefault();
+
+      const value = DelimitedInput.subtract(event.target.value, event.target.selectionStart, event.target.selectionEnd);
+      event.target.value = format(DelimitedInput.inject(value, key, priorPosition));
+
+      const shift = event.target.value.length - value.length;
+
+      event.target.selectionStart = priorPosition + shift;
+      event.target.selectionEnd = priorPosition + shift;
+    } else if (event.keyCode === 8) {
+      event.preventDefault();
+      const result = DelimitedInput.backspace(event.target, separator);
+      const newValue = format(result.value);
+      event.target.value = newValue;
+      event.target.selectionStart = event.target.selectionEnd = newValue.length - result.positionFromEnd;
+    }
+  }
 }
 
-function formatter(separator, spread) {
+DelimitedInput.reverse = function(string) {
+  return string.split("").reverse().join("");
+};
+
+DelimitedInput.formatter = function(separator, spread) {
   const re = new RegExp(".{1," + spread + "}", "g");
 
   return function(value) {
     return value.length === 0
         ? ""
-        : reverse(reverse(value.replace(/,/g, "")).match(re).join(separator));
+        : DelimitedInput.reverse(DelimitedInput.reverse(value.replace(/,/g, "")).match(re).join(separator));
   }
-}
+};
 
-function inject(string, character, positionFromLeft) {
-  return (string.slice(0, positionFromLeft) + character + string.slice(positionFromLeft));
-}
-
-function strip(string) {
+DelimitedInput.strip = function(string) {
   return string.replace(/[^0-9]/g, '');
-}
+};
 
-function subtract(string, start, end) {
+DelimitedInput.inject = function(string, character, positionFromLeft) {
+  return (string.slice(0, positionFromLeft) + character + string.slice(positionFromLeft));
+};
+
+DelimitedInput.subtract = function(string, start, end) {
   const head = string.slice(0, start);
   const tail = string.slice(end, string.length);
 
   return head + tail;
-}
+};
 
-function backspace(el, separator) {
+DelimitedInput.backspace = function(el, separator) {
   const value = el.value;
 
   const selStart = el.selectionStart;
@@ -39,36 +66,9 @@ function backspace(el, separator) {
 
   return {
     positionFromEnd: value.length - selEnd, // Input modification will reformat only for the beginning of the string
-    value: subtract(value, cursorPosition - (cursorRightOfSeparator
+    value: this.subtract(value, cursorPosition - (cursorRightOfSeparator
             ? separator.length // Erase char before separator if cursor right after of separator
             : 0),
         selEnd)
   };
-}
-
-const DelimitedInput = function(separator, spread) {
-  const format = formatter(separator, spread);
-
-  return function(event) {
-    const priorPosition = event.target.selectionStart;
-    const key = String.fromCharCode(event.keyCode);
-
-    if (/[0-9]/.test(key)) {
-      event.preventDefault();
-
-      const value = subtract(event.target.value, event.target.selectionStart, event.target.selectionEnd);
-      event.target.value = format(inject(value, key, priorPosition));
-
-      const shift = event.target.value.length - value.length;
-
-      event.target.selectionStart = priorPosition + shift;
-      event.target.selectionEnd = priorPosition + shift;
-    } else if (event.keyCode === 8) {
-      event.preventDefault();
-      const result = backspace(event.target, separator);
-      const newValue = format(result.value);
-      event.target.value = newValue;
-      event.target.selectionStart = event.target.selectionEnd = newValue.length - result.positionFromEnd;
-    }
-  }
 };

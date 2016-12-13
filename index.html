@@ -25,7 +25,7 @@
   const captureResult = function(func) {
     return function(event) {
       const result = func(event);
-      document.getElementById("num_out").value = strip(event.target.value);
+      document.getElementById("num_out").value = DelimitedInput.strip(event.target.value);
       document.getElementById("start").value = event.target.selectionStart;
       document.getElementById("end").value = event.target.selectionEnd;
       return result;
