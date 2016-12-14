@@ -34,5 +34,5 @@ npm install
 npm start
 ```
 
-Open `index.html` in the browser (e.g. `file://...` from file system) for
+Open `test.html` in the browser (e.g. `file://...` from file system) for
 testing. Code changes reload the test page automatically.
