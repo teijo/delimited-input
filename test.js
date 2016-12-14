@@ -20,7 +20,92 @@ function selection(index, length) {
 }
 
 const kb = Keysim.Keyboard.US_ENGLISH;
-describe('Input', function() {
+
+const captureResult = function(func) {
+  return function(event) {
+    const result = func(event);
+    document.getElementById("num_out").value = DelimitedInput.strip(event.target.value);
+    document.getElementById("start").value = event.target.selectionStart;
+    document.getElementById("end").value = event.target.selectionEnd;
+    return result;
+  };
+};
+
+describe('Product code input', function() {
+  const ccDelimiter = captureResult(DelimitedInput("-", 5));
+
+  before(function() {
+    document
+        .getElementById("num")
+        .addEventListener("keydown", ccDelimiter);
+  });
+
+  after(function() {
+    document
+        .getElementById("num")
+        .removeEventListener("keydown", ccDelimiter);
+  });
+
+  beforeEach(function() {
+    input().value = '';
+  });
+
+  describe('value for "827419376019585"', function() {
+    beforeEach(function() {
+      kb.dispatchEventsForInput('827419376019585', input());
+    });
+
+    it('outputs "82741-93760-19585"', function() {
+      assert.equal(value(), '82741-93760-19585');
+    });
+  });
+});
+
+describe('Creditcard input', function() {
+  const ccDelimiter = captureResult(DelimitedInput(" ", 4));
+
+  before(function() {
+    document
+        .getElementById("num")
+        .addEventListener("keydown", ccDelimiter);
+  });
+
+  after(function() {
+    document
+        .getElementById("num")
+        .removeEventListener("keydown", ccDelimiter);
+  });
+
+  beforeEach(function() {
+    input().value = '';
+  });
+
+  describe('value for "4820672882915824"', function() {
+    beforeEach(function() {
+      kb.dispatchEventsForInput('4820672882915824', input());
+    });
+
+    it('outputs "4820 6728 8291 5824"', function() {
+      assert.equal(value(), '4820 6728 8291 5824');
+    });
+  });
+});
+
+describe('Number input', function() {
+  const thousandDelimiter = captureResult(DelimitedInput(",", 3));
+
+  before(function() {
+    document
+        .getElementById("num")
+        .addEventListener("keydown", thousandDelimiter);
+  });
+
+  after(function() {
+    document
+        .getElementById("num")
+        .removeEventListener("keydown", thousandDelimiter);
+  });
+
   beforeEach(function() {
     input().value = '';
   });

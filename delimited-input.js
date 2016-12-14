@@ -31,11 +31,12 @@ DelimitedInput.reverse = function(string) {
 
 DelimitedInput.formatter = function(separator, spread) {
   const re = new RegExp(".{1," + spread + "}", "g");
+  const reStrip = new RegExp(separator, "g");
 
   return function(value) {
     return value.length === 0
         ? ""
-        : DelimitedInput.reverse(DelimitedInput.reverse(value.replace(/,/g, "")).match(re).join(separator));
+        : DelimitedInput.reverse(DelimitedInput.reverse(value.replace(reStrip, "")).match(re).join(separator));
   }
 };
 
