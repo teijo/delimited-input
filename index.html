@@ -1,0 +1,48 @@
+<html>
+<head>
+  <style>
+    input {
+      font-family: monospace;
+      text-align: right;
+      font-size: 26px;
+      margin-bottom: 20px;
+    }
+    script.demo {
+      display: block;
+      white-space: pre;
+      font-family: monospace;
+      background-color: #EEE;
+      padding: 10px;
+    }
+  </style>
+  <script src="delimited-input.js"></script>
+</head>
+<body>
+<h1>delimited-input</h1>
+<p>Reading long numbers or codes is hard without some kind of delimiter to
+  provide pacing or idea of the scale. This library provides support for
+  formatting user input as it's written.</p>
+<p>This library is fairly early in development but it should provide some
+  basic support for formatting rules already.</p>
+<h2>Big number</h2>
+<input id="big_number" type="text" value="7,283,947"/>
+<script class="demo">document
+  .getElementById("big_number")
+  .addEventListener("keydown", DelimitedInput(",", 3));
+</script>
+
+<h2>Credit card</h2>
+<input id="credit_card" type="text" style="text-align: left" value="4265 8275 6109 5863"/>
+<script class="demo">document
+  .getElementById("credit_card")
+  .addEventListener("keydown", DelimitedInput(" ", 4));
+</script>
+
+<h2>Product code</h2>
+<input id="product_code" type="text" style="text-align: center" value="abj3-9lv2-jvk3"/>
+<script class="demo">document
+  .getElementById("product_code")
+  .addEventListener("keydown", DelimitedInput("-", 4));
+</script>
+</body>
+</html>
