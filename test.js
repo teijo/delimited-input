@@ -32,7 +32,7 @@ const captureResult = function(func) {
 };
 
 describe('Product code input', function() {
-  const ccDelimiter = captureResult(DelimitedInput("-", 5));
+  const ccDelimiter = captureResult(DelimitedInput("-", 5, DelimitedInput.ltr));
 
   before(function() {
     document
@@ -62,7 +62,7 @@ describe('Product code input', function() {
 });
 
 describe('Creditcard input', function() {
-  const ccDelimiter = captureResult(DelimitedInput(" ", 4));
+  const ccDelimiter = captureResult(DelimitedInput(" ", 4, DelimitedInput.ltr));
 
   before(function() {
     document
@@ -92,7 +92,7 @@ describe('Creditcard input', function() {
 });
 
 describe('Number input', function() {
-  const thousandDelimiter = captureResult(DelimitedInput(",", 3));
+  const thousandDelimiter = captureResult(DelimitedInput(",", 3, DelimitedInput.rtl));
 
   before(function() {
     document

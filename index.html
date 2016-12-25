@@ -28,21 +28,21 @@
 <input id="big_number" type="text" value="7,283,947"/>
 <script class="demo">document
   .getElementById("big_number")
-  .addEventListener("keydown", DelimitedInput(",", 3));
+  .addEventListener("keydown", DelimitedInput(",", 3, DelimitedInput.rtl));
 </script>
 
 <h2>Credit card</h2>
 <input id="credit_card" type="text" size="19" style="text-align: left" value="4265 8275 6109 5863"/>
 <script class="demo">document
   .getElementById("credit_card")
-  .addEventListener("keydown", DelimitedInput(" ", 4));
+  .addEventListener("keydown", DelimitedInput(" ", 4, DelimitedInput.ltr));
 </script>
 
 <h2>Product code</h2>
 <input id="product_code" type="text" size="14" style="text-align: center" value="abj3-9lv2-jvk3"/>
 <script class="demo">document
   .getElementById("product_code")
-  .addEventListener("keydown", DelimitedInput("-", 4));
+  .addEventListener("keydown", DelimitedInput("-", 4, DelimitedInput.ltr));
 </script>
 </body>
 </html>

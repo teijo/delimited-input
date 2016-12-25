@@ -1,5 +1,5 @@
-function DelimitedInput(separator, spread) {
-  const format = DelimitedInput.formatter(separator, spread);
+function DelimitedInput(separator, spread, direction) {
+  const format = DelimitedInput.formatter(separator, spread, direction);
 
   return function(event) {
     const priorPosition = event.target.selectionStart;
@@ -25,18 +25,23 @@ function DelimitedInput(separator, spread) {
   }
 }
 
+DelimitedInput.ltr = {}; // Apply rules left-to-right
+DelimitedInput.rtl = {}; // Apply rules right-to-left
+
 DelimitedInput.reverse = function(string) {
   return string.split("").reverse().join("");
 };
 
-DelimitedInput.formatter = function(separator, spread) {
+DelimitedInput.formatter = function(separator, spread, direction) {
   const re = new RegExp(".{1," + spread + "}", "g");
   const reStrip = new RegExp(separator, "g");
 
   return function(value) {
     return value.length === 0
         ? ""
-        : DelimitedInput.reverse(DelimitedInput.reverse(value.replace(reStrip, "")).match(re).join(separator));
+        : (direction === DelimitedInput.rtl
+            ? DelimitedInput.reverse(DelimitedInput.reverse(value.replace(reStrip, "")).match(re).join(separator))
+            : value.replace(reStrip, "").match(re).join(separator));
   }
 };
 
