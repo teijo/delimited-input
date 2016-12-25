@@ -14,10 +14,15 @@ support for formatting rules already.
 - Credit card: writing `4265827561095863` shows like this `4265 8275 6109 5863`
 - Product code: writing `abj39lv2jvk3` show like this `abj3-9lv2-jvk3`
 
+Test at the [project homepage](https://teijo.github.io/delimited-input/).
 
 ## Example usage
 
-Auto-format user input:
+Auto-format user input as it is modified:
+
+```html
+<input id="numeric_input" type="text" value="7,283,947"/>
+```
 
 ```javascript
 var thousandsDelimiter = DelimitedInput(",", 3);
