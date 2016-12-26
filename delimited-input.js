@@ -1,4 +1,7 @@
 function DelimitedInput(separator, spread, direction) {
+  if (typeof(separator) !== 'string' || separator.length !== 1) {
+    throw new Error('Delimiter must be a single character string, got ' + typeof(separator) + ' "' + separator + '"');
+  }
   const format = DelimitedInput.formatter(separator, spread, direction);
 
   // "xxx-yyy" -> segmentLength === 4

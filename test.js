@@ -1,4 +1,5 @@
 const assert = chai.assert;
+const expect = chai.expect;
 
 mocha.setup('bdd');
 
@@ -465,6 +466,22 @@ describe('Number input', function() {
           assert.equal(input().selectionStart, input().selectionEnd);
         });
       });
+    });
+  });
+});
+
+describe('Invaid initialization', function() {
+  describe('with non-char delimiter', function() {
+    var testInit = null;
+
+    beforeEach(function() {
+      testInit = function() {
+        DelimitedInput("123", 4, DelimitedInput.ltr)
+      }
+    });
+
+    it('throws exception with correct description', function() {
+      expect(testInit).to.throw(Error, /^Delimiter must be a single character string, got string "123"$/);
     });
   });
 });
