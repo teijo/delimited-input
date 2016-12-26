@@ -30,7 +30,11 @@ function DelimitedInput(separator, spread, direction) {
       const result = DelimitedInput.backspace(event.target, separator, direction);
       const newValue = format(result.value);
       event.target.value = newValue;
-      event.target.selectionStart = event.target.selectionEnd = newValue.length - result.positionFromEnd;
+      if (direction === DelimitedInput.ltr) {
+        event.target.selectionStart = event.target.selectionEnd = result.positionFromStart;
+      } else {
+        event.target.selectionStart = event.target.selectionEnd = newValue.length - result.positionFromEnd;
+      }
     }
   }
 }
@@ -80,11 +84,16 @@ DelimitedInput.backspace = function(el, separator, direction) {
   const cursorRightOfSeparator = selStart > 0 && value[selStart - 1] === separator[separator.length - 1];
   const cursorPosition = Math.max(0, selStart - (selLength ? 0  : 1));
 
+  // In RTL delimiters never change on right side of the cursor when erasing
   const positionFromEnd = value.length - selEnd;
 
+  // In LTR at most additional separator is removed, delimiters may change on
+  // right hand side of the cursor
+  const positionFromStart = selStart - (cursorRightOfSeparator ? 2 : 1);
+
   return {
-    positionFromEnd: positionFromEnd + (
-        cursorRightOfSeparator && direction === DelimitedInput.ltr ? 1 : 0),
+    positionFromEnd: positionFromEnd,
+    positionFromStart: positionFromStart,
     value: this.subtract(value, cursorPosition - (cursorRightOfSeparator
             ? separator.length // Erase char before separator if cursor right after of separator
             : 0),

@@ -52,6 +52,56 @@ describe('Product code input', function() {
     input().value = '';
   });
 
+  describe('value for "11111222223"', function() {
+    beforeEach(function() {
+      kb.dispatchEventsForInput('11111222223', input());
+    });
+
+    it('outputs "11111-22222-3"', function() {
+      assert.equal(value(), '11111-22222-3');
+    });
+
+    describe('entering backspace', function() {
+      describe('right of first separator', function() {
+        beforeEach(function() {
+          caret(6);
+          kb.dispatchEventsForAction('backspace', input());
+        });
+
+        it('outputs "11112-22223"', function() {
+          assert.equal(value(), '11112-22223');
+        });
+
+        it('selection start after last "1"', function() {
+          assert.equal(4, input().selectionStart);
+        });
+
+        it('selection length is zero', function() {
+          assert.equal(input().selectionStart, input().selectionEnd);
+        });
+      });
+
+      describe('after first "2" from left', function() {
+        beforeEach(function() {
+          caret(7);
+          kb.dispatchEventsForAction('backspace', input());
+        });
+
+        it('outputs "11111-22223"', function() {
+          assert.equal(value(), '11111-22223');
+        });
+
+        it('selection start after first separator', function() {
+          assert.equal(6, input().selectionStart);
+        });
+
+        it('selection length is zero', function() {
+          assert.equal(input().selectionStart, input().selectionEnd);
+        });
+      });
+    });
+  });
+
   describe('value for "827419376019585"', function() {
     beforeEach(function() {
       kb.dispatchEventsForInput('827419376019585', input());
