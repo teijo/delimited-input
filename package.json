@@ -2,6 +2,7 @@
   "name": "delimited-input",
   "version": "0.1.0",
   "description": "Delimited input fields",
+  "homepage": "https://teijo.github.io/delimited-input/",
   "keywords": [
     "delimited", "delimiter", "input", "formatting", "comma", "dash",
     "thousand", "thousands", "digit", "separator", "separated", "grouping"
