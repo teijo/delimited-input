@@ -1,6 +1,9 @@
 function DelimitedInput(separator, spread, direction) {
   const format = DelimitedInput.formatter(separator, spread, direction);
 
+  // "xxx-yyy" -> segmentLength === 4
+  const segmentLength = spread + separator.length;
+
   return function(event) {
     const priorPosition = event.target.selectionStart;
     const key = String.fromCharCode(event.keyCode);
@@ -11,10 +14,17 @@ function DelimitedInput(separator, spread, direction) {
       const value = DelimitedInput.subtract(event.target.value, event.target.selectionStart, event.target.selectionEnd);
       event.target.value = format(DelimitedInput.inject(value, key, priorPosition));
 
-      const shift = event.target.value.length - value.length;
-
-      event.target.selectionStart = priorPosition + shift;
-      event.target.selectionEnd = priorPosition + shift;
+      if (direction === DelimitedInput.ltr) {
+        // +1 as input is not yet reflected in position
+        const next_to_separator = ((priorPosition + 1) % segmentLength == 0 // right of separator
+            || (priorPosition + 2) % segmentLength == 0); // left of separator, adds +1 more
+        const shift = (priorPosition + (next_to_separator ? 2 : 1));
+        event.target.selectionStart = event.target.selectionEnd = shift;
+      } else {
+        // Accounts also additional or removed delimiters
+        const shift = event.target.value.length - value.length;
+        event.target.selectionStart = event.target.selectionEnd = (priorPosition + shift);
+      }
     } else if (event.keyCode === 8) {
       event.preventDefault();
       const result = DelimitedInput.backspace(event.target, separator, direction);

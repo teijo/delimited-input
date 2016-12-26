@@ -61,6 +61,27 @@ describe('Product code input', function() {
       assert.equal(value(), '82741-93760-19585');
     });
 
+    describe('entering "1"', function() {
+      describe('right of first separator', function() {
+        beforeEach(function() {
+          caret(6);
+          kb.dispatchEventsForInput('1', input());
+        });
+
+        it('outputs "82741-19376-01958-5"', function() {
+          assert.equal(value(), '82741-19376-01958-5');
+        });
+
+        it('selection start after inserted "1"', function() {
+          assert.equal(7, input().selectionStart);
+        });
+
+        it('selection length is zero', function() {
+          assert.equal(input().selectionStart, input().selectionEnd);
+        });
+      });
+    });
+
     describe('entering backspace', function() {
       describe('in front of value', function() {
         beforeEach(function() {
