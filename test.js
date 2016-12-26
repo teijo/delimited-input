@@ -25,7 +25,8 @@ const kb = Keysim.Keyboard.US_ENGLISH;
 const captureResult = function(func) {
   return function(event) {
     const result = func(event);
-    document.getElementById("num_out").value = DelimitedInput.strip(event.target.value);
+    document.getElementById("num_out").value = DelimitedInput.strip(
+        event.target.value);
     document.getElementById("start").value = event.target.selectionStart;
     document.getElementById("end").value = event.target.selectionEnd;
     return result;
@@ -33,7 +34,8 @@ const captureResult = function(func) {
 };
 
 describe('Product code input', function() {
-  const ccDelimiter = captureResult(DelimitedInput("-", 5, DelimitedInput.ltr));
+  const ccDelimiter = captureResult(DelimitedInput("-", 5,
+      DelimitedInput.ltr));
 
   before(function() {
     document
@@ -225,7 +227,8 @@ describe('Product code input', function() {
 });
 
 describe('Creditcard input', function() {
-  const ccDelimiter = captureResult(DelimitedInput(" ", 4, DelimitedInput.ltr));
+  const ccDelimiter = captureResult(DelimitedInput(" ", 4,
+      DelimitedInput.ltr));
 
   before(function() {
     document
@@ -255,7 +258,8 @@ describe('Creditcard input', function() {
 });
 
 describe('Number input', function() {
-  const thousandDelimiter = captureResult(DelimitedInput(",", 3, DelimitedInput.rtl));
+  const thousandDelimiter = captureResult(DelimitedInput(",", 3,
+      DelimitedInput.rtl));
 
   before(function() {
     document

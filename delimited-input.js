@@ -1,6 +1,7 @@
 function DelimitedInput(separator, spread, direction) {
   if (typeof(separator) !== 'string' || separator.length !== 1) {
-    throw new Error('Delimiter must be a single character string, got ' + typeof(separator) + ' "' + separator + '"');
+    throw new Error('Delimiter must be a single character string, got ' +
+        typeof(separator) + ' "' + separator + '"');
   }
   const format = DelimitedInput.formatter(separator, spread, direction);
 
@@ -8,36 +9,38 @@ function DelimitedInput(separator, spread, direction) {
   const segmentLength = spread + separator.length;
 
   return function(event) {
-    const priorPosition = event.target.selectionStart;
+    const el = event.target;
+    const priorPosition = el.selectionStart;
     const key = String.fromCharCode(event.keyCode);
 
     if (/[0-9]/.test(key)) {
       event.preventDefault();
 
-      const value = DelimitedInput.subtract(event.target.value, event.target.selectionStart, event.target.selectionEnd);
-      event.target.value = format(DelimitedInput.inject(value, key, priorPosition));
+      const value = DelimitedInput.subtract(
+          el.value, el.selectionStart, el.selectionEnd);
+
+      el.value = format(DelimitedInput.inject(value, key, priorPosition));
 
       if (direction === DelimitedInput.ltr) {
         // +1 as input is not yet reflected in position
-        const next_to_separator = ((priorPosition + 1) % segmentLength == 0 // right of separator
-            || (priorPosition + 2) % segmentLength == 0); // left of separator, adds +1 more
+        const next_to_separator = (priorPosition + 1) % segmentLength == 0
+            // left of separator, adds +1 more
+            || ((priorPosition + 2) % segmentLength == 0);
         const shift = (priorPosition + (next_to_separator ? 2 : 1));
-        event.target.selectionStart = event.target.selectionEnd = shift;
+        el.selectionStart = el.selectionEnd = shift;
       } else {
         // Accounts also additional or removed delimiters
-        const shift = event.target.value.length - value.length;
-        event.target.selectionStart = event.target.selectionEnd = (priorPosition + shift);
+        const shift = el.value.length - value.length;
+        el.selectionStart = el.selectionEnd = (priorPosition + shift);
       }
     } else if (event.keyCode === 8) {
       event.preventDefault();
-      const result = DelimitedInput.backspace(event.target, separator, direction);
+      const result = DelimitedInput.backspace(el, separator, direction);
       const newValue = format(result.value);
-      event.target.value = newValue;
-      if (direction === DelimitedInput.ltr) {
-        event.target.selectionStart = event.target.selectionEnd = result.positionFromStart;
-      } else {
-        event.target.selectionStart = event.target.selectionEnd = newValue.length - result.positionFromEnd;
-      }
+      el.value = newValue;
+      el.selectionStart = el.selectionEnd = (direction === DelimitedInput.ltr)
+          ? result.positionFromStart
+          : newValue.length - result.positionFromEnd;
     }
   }
 }
@@ -57,7 +60,8 @@ DelimitedInput.formatter = function(separator, spread, direction) {
     return value.length === 0
         ? ""
         : (direction === DelimitedInput.rtl
-            ? DelimitedInput.reverse(DelimitedInput.reverse(value.replace(reStrip, "")).match(re).join(separator))
+            ? DelimitedInput.reverse(DelimitedInput.reverse(
+                value.replace(reStrip, "")).match(re).join(separator))
             : value.replace(reStrip, "").match(re).join(separator));
   }
 };
@@ -67,7 +71,8 @@ DelimitedInput.strip = function(string) {
 };
 
 DelimitedInput.inject = function(string, character, positionFromLeft) {
-  return (string.slice(0, positionFromLeft) + character + string.slice(positionFromLeft));
+  return string.slice(0, positionFromLeft) +
+      character + string.slice(positionFromLeft);
 };
 
 DelimitedInput.subtract = function(string, start, end) {
@@ -84,7 +89,8 @@ DelimitedInput.backspace = function(el, separator, direction) {
   const selEnd = el.selectionEnd;
   const selLength = selEnd - selStart;
 
-  const cursorRightOfSeparator = selStart > 0 && value[selStart - 1] === separator[separator.length - 1];
+  const cursorRightOfSeparator = selStart > 0
+      && value[selStart - 1] === separator[separator.length - 1];
   const cursorPosition = Math.max(0, selStart - (selLength ? 0  : 1));
 
   // In RTL delimiters never change on right side of the cursor when erasing
@@ -98,7 +104,8 @@ DelimitedInput.backspace = function(el, separator, direction) {
     positionFromEnd: positionFromEnd,
     positionFromStart: positionFromStart,
     value: this.subtract(value, cursorPosition - (cursorRightOfSeparator
-            ? separator.length // Erase char before separator if cursor right after of separator
+            // Erase char before separator if cursor right after of separator
+            ? separator.length
             : 0),
         selEnd)
   };
