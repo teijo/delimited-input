@@ -17,7 +17,7 @@ function DelimitedInput(separator, spread, direction) {
       event.target.selectionEnd = priorPosition + shift;
     } else if (event.keyCode === 8) {
       event.preventDefault();
-      const result = DelimitedInput.backspace(event.target, separator);
+      const result = DelimitedInput.backspace(event.target, separator, direction);
       const newValue = format(result.value);
       event.target.value = newValue;
       event.target.selectionStart = event.target.selectionEnd = newValue.length - result.positionFromEnd;
@@ -60,7 +60,7 @@ DelimitedInput.subtract = function(string, start, end) {
   return head + tail;
 };
 
-DelimitedInput.backspace = function(el, separator) {
+DelimitedInput.backspace = function(el, separator, direction) {
   const value = el.value;
 
   const selStart = el.selectionStart;
@@ -70,8 +70,11 @@ DelimitedInput.backspace = function(el, separator) {
   const cursorRightOfSeparator = selStart > 0 && value[selStart - 1] === separator[separator.length - 1];
   const cursorPosition = Math.max(0, selStart - (selLength ? 0  : 1));
 
+  const positionFromEnd = value.length - selEnd;
+
   return {
-    positionFromEnd: value.length - selEnd, // Input modification will reformat only for the beginning of the string
+    positionFromEnd: positionFromEnd + (
+        cursorRightOfSeparator && direction === DelimitedInput.ltr ? 1 : 0),
     value: this.subtract(value, cursorPosition - (cursorRightOfSeparator
             ? separator.length // Erase char before separator if cursor right after of separator
             : 0),

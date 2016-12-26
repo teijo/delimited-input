@@ -38,6 +38,8 @@ describe('Product code input', function() {
     document
         .getElementById("num")
         .addEventListener("keydown", ccDelimiter);
+    document
+        .getElementById("num").style.textAlign = 'left';
   });
 
   after(function() {
@@ -57,6 +59,95 @@ describe('Product code input', function() {
 
     it('outputs "82741-93760-19585"', function() {
       assert.equal(value(), '82741-93760-19585');
+    });
+
+    describe('entering backspace', function() {
+      describe('in front of value', function() {
+        beforeEach(function() {
+          caret(0);
+          kb.dispatchEventsForAction('backspace', input());
+        });
+
+        it('does not modify input', function() {
+          assert.equal(value(), '82741-93760-19585');
+        });
+      });
+
+      describe('after first character', function() {
+        beforeEach(function() {
+          caret(1);
+          kb.dispatchEventsForAction('backspace', input());
+        });
+
+        it('removes 8', function() {
+          assert.equal(value(), '27419-37601-9585');
+        });
+
+        it('selection start before value', function() {
+          assert.equal(0, input().selectionStart);
+        });
+
+        it('selection length is zero', function() {
+          assert.equal(input().selectionStart, input().selectionEnd);
+        });
+      });
+
+      describe('after second separator', function() {
+        beforeEach(function() {
+          caret(12);
+          kb.dispatchEventsForAction('backspace', input());
+        });
+
+        it('removes 0', function() {
+          assert.equal(value(), '82741-93761-9585');
+        });
+
+        it('selection start before separator', function() {
+          assert.equal(10, input().selectionStart);
+        });
+
+        it('selection length is zero', function() {
+          assert.equal(input().selectionStart, input().selectionEnd);
+        });
+      });
+
+      describe('before second separator', function() {
+        beforeEach(function() {
+          caret(11);
+          kb.dispatchEventsForAction('backspace', input());
+        });
+
+        it('removes 0', function() {
+          assert.equal(value(), '82741-93761-9585');
+        });
+
+        it('selection start before separator', function() {
+          assert.equal(10, input().selectionStart);
+        });
+
+        it('selection length is zero', function() {
+          assert.equal(input().selectionStart, input().selectionEnd);
+        });
+      });
+
+      describe('after last character', function() {
+        beforeEach(function() {
+          caret(value().length);
+          kb.dispatchEventsForAction('backspace', input());
+        });
+
+        it('removes 5', function() {
+          assert.equal(value(), '82741-93760-1958');
+        });
+
+        it('selection start at last character', function() {
+          assert.equal(input().selectionStart, value().length);
+        });
+
+        it('selection length is zero', function() {
+          assert.equal(input().selectionStart, input().selectionEnd);
+        });
+      });
     });
   });
 });
