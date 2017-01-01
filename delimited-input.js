@@ -13,13 +13,13 @@ function DelimitedInput(separator, spread, direction) {
     const priorPosition = el.selectionStart;
     const key = String.fromCharCode(event.keyCode);
 
-    if (/[0-9]/.test(key)) {
+    if (/[A-z0-9]/.test(key)) {
       event.preventDefault();
 
       const value = DelimitedInput.subtract(
           el.value, el.selectionStart, el.selectionEnd);
 
-      el.value = format(DelimitedInput.inject(value, key, priorPosition));
+      el.value = format(DelimitedInput.inject(value, event.shiftKey ? key : key.toLowerCase(), priorPosition));
 
       if (direction === DelimitedInput.ltr) {
         // +1 as input is not yet reflected in position
@@ -67,7 +67,7 @@ DelimitedInput.formatter = function(separator, spread, direction) {
 };
 
 DelimitedInput.strip = function(string) {
-  return string.replace(/[^0-9]/g, '');
+  return string.replace(/[^A-z0-9]/g, '');
 };
 
 DelimitedInput.inject = function(string, character, positionFromLeft) {
