@@ -16,7 +16,9 @@ function DelimitedInput(separator, spread, direction) {
     if (/[A-z0-9]/.test(key)) {
       event.preventDefault();
 
-      if (el.value.length >= el.size) {
+      const selectionLength = el.selectionEnd - el.selectionStart;
+
+      if (el.value.length >= el.size && selectionLength === 0) {
         return; // after preventDefault() to avoid changing input value
       }
 

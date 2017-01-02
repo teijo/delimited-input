@@ -64,6 +64,17 @@ describe('Restricted input size', function() {
     it('outputs "12-34"', function() {
       assert.equal(value(), '12-34');
     });
+
+    describe('selection over 3 and entering "x"', function() {
+      beforeEach(function() {
+        selection(3, 1);
+        kb.dispatchEventsForInput('x', input());
+      });
+
+      it('outputs "12-x4"', function() {
+        assert.equal(value(), '12-x4');
+      });
+    });
   });
 });
 
