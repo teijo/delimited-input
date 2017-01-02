@@ -33,6 +33,79 @@ const captureResult = function(func) {
   };
 };
 
+describe('Prefill', function() {
+  const listener = captureResult(DelimitedInput(":", 2,
+      DelimitedInput.ltr, true));
+
+  before(function() {
+    document.getElementById("num").addEventListener("keydown", listener);
+    document.getElementById("num").size = '8';
+  });
+
+  after(function() {
+    document.getElementById("num").removeEventListener("keydown", listener);
+    document.getElementById("num").setAttribute('size', 'auto');
+  });
+
+  beforeEach(function() {
+    input().value = '';
+  });
+
+  describe('value for "AA"', function() {
+    beforeEach(function() {
+      kb.dispatchEventsForInput('AA', input());
+    });
+
+    it('outputs "AA:"', function() {
+      assert.equal(value(), 'AA:');
+    });
+
+    it('selection start after ":"', function() {
+      assert.equal(3, input().selectionStart);
+    });
+
+    it('selection length is zero', function() {
+      assert.equal(input().selectionStart, input().selectionEnd);
+    });
+
+    describe('appending "BB"', function() {
+      beforeEach(function() {
+        kb.dispatchEventsForInput('BB', input());
+      });
+
+      it('appends "BB:"', function() {
+        assert.equal(value(), 'AA:BB:');
+      });
+
+      it('selection start after ":"', function() {
+        assert.equal(6, input().selectionStart);
+      });
+
+      it('selection length is zero', function() {
+        assert.equal(input().selectionStart, input().selectionEnd);
+      });
+
+      describe('appending "CC"', function() {
+        beforeEach(function() {
+          kb.dispatchEventsForInput('CC', input());
+        });
+
+        it('appends "CC"', function() {
+          assert.equal(value(), 'AA:BB:CC');
+        });
+
+        it('selection start after ":"', function() {
+          assert.equal(8, input().selectionStart);
+        });
+
+        it('selection length is zero', function() {
+          assert.equal(input().selectionStart, input().selectionEnd);
+        });
+      });
+    });
+  });
+});
+
 describe('Restricted input size', function() {
   const ccDelimiter = captureResult(DelimitedInput("-", 2,
       DelimitedInput.ltr));

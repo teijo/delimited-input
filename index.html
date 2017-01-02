@@ -56,5 +56,17 @@
   .getElementById("product_code")
   .addEventListener("keydown", DelimitedInput("-", 4, DelimitedInput.ltr));
 </script>
+
+<h2>MAC address with separator prefill</h2>
+<input id="mac" type="text" size="17" style="text-align: center" value="AA:BB:CC:"/>
+<pre>
+&lt;input id="product_code" type="text" size="17"
+       style="text-align: center"
+       value="AA:BB:CC:"/&gt;
+</pre>
+<script class="demo">document
+    .getElementById("mac")
+    .addEventListener("keydown", DelimitedInput(":", 2, DelimitedInput.ltr, true));
+</script>
 </body>
 </html>

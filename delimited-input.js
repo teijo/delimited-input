@@ -1,4 +1,4 @@
-function DelimitedInput(separator, spread, direction) {
+function DelimitedInput(separator, spread, direction, prefill) {
   if (typeof(separator) !== 'string' || separator.length !== 1) {
     throw new Error('Delimiter must be a single character string, got ' +
         typeof(separator) + ' "' + separator + '"');
@@ -25,7 +25,10 @@ function DelimitedInput(separator, spread, direction) {
       const value = DelimitedInput.subtract(
           el.value, el.selectionStart, el.selectionEnd);
 
-      el.value = format(DelimitedInput.inject(value, event.shiftKey ? key : key.toLowerCase(), priorPosition));
+      const nextValue = format(DelimitedInput.inject(value, event.shiftKey ? key : key.toLowerCase(), priorPosition));
+      const predict = (prefill && nextValue.length < el.size && (nextValue.length + 1) % segmentLength == 0) ? separator : "";
+
+      el.value = nextValue + predict;
 
       if (direction === DelimitedInput.ltr) {
         // +1 as input is not yet reflected in position
