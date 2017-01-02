@@ -33,6 +33,40 @@ const captureResult = function(func) {
   };
 };
 
+describe('Restricted input size', function() {
+  const ccDelimiter = captureResult(DelimitedInput("-", 2,
+      DelimitedInput.ltr));
+
+  before(function() {
+    document
+        .getElementById("num")
+        .addEventListener("keydown", ccDelimiter);
+    document
+        .getElementById("num").size = '5';
+  });
+
+  after(function() {
+    document
+        .getElementById("num")
+        .removeEventListener("keydown", ccDelimiter);
+    document.getElementById("num").setAttribute('size', 'auto');
+  });
+
+  beforeEach(function() {
+    input().value = '';
+  });
+
+  describe('value for "12345"', function() {
+    beforeEach(function() {
+      kb.dispatchEventsForInput('12345', input());
+    });
+
+    it('outputs "12-34"', function() {
+      assert.equal(value(), '12-34');
+    });
+  });
+});
+
 describe('Product code input', function() {
   const ccDelimiter = captureResult(DelimitedInput("-", 5,
       DelimitedInput.ltr));

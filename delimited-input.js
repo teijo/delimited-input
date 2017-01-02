@@ -16,6 +16,10 @@ function DelimitedInput(separator, spread, direction) {
     if (/[A-z0-9]/.test(key)) {
       event.preventDefault();
 
+      if (el.value.length >= el.size) {
+        return; // after preventDefault() to avoid changing input value
+      }
+
       const value = DelimitedInput.subtract(
           el.value, el.selectionStart, el.selectionEnd);
 

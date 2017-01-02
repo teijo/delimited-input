@@ -7,7 +7,7 @@
       font-size: 26px;
       margin-bottom: 20px;
     }
-    script.demo {
+    script.demo, pre {
       display: block;
       white-space: pre;
       font-family: monospace;
@@ -47,6 +47,11 @@
 
 <h2>Product code</h2>
 <input id="product_code" type="text" size="14" style="text-align: center" value="abj3-9lv2-jvk3"/>
+<pre>
+&lt;input id="product_code" type="text" size="14"
+       style="text-align: center"
+       value="abj3-9lv2-jvk3"/&gt;
+</pre>
 <script class="demo">document
   .getElementById("product_code")
   .addEventListener("keydown", DelimitedInput("-", 4, DelimitedInput.ltr));
