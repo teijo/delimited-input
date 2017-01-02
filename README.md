@@ -1,5 +1,7 @@
 # delimited-input
 
+*Proof-of-concept*
+
 Reading long numbers or codes is hard without some kind of delimiter to
 provide pacing or idea of the scale. This library provides support for
 formatting user input as it's written.
