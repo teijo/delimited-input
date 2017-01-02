@@ -38,13 +38,13 @@ describe('Prefill', function() {
       DelimitedInput.ltr, true));
 
   before(function() {
-    document.getElementById("num").addEventListener("keydown", listener);
-    document.getElementById("num").size = '8';
+    input().addEventListener("keydown", listener);
+    input().size = '8';
   });
 
   after(function() {
-    document.getElementById("num").removeEventListener("keydown", listener);
-    document.getElementById("num").setAttribute('size', 'auto');
+    input().removeEventListener("keydown", listener);
+    input().setAttribute('size', 'auto');
   });
 
   beforeEach(function() {
@@ -111,18 +111,13 @@ describe('Restricted input size', function() {
       DelimitedInput.ltr));
 
   before(function() {
-    document
-        .getElementById("num")
-        .addEventListener("keydown", ccDelimiter);
-    document
-        .getElementById("num").size = '5';
+    input().addEventListener("keydown", ccDelimiter);
+    input().size = '5';
   });
 
   after(function() {
-    document
-        .getElementById("num")
-        .removeEventListener("keydown", ccDelimiter);
-    document.getElementById("num").setAttribute('size', 'auto');
+    input().removeEventListener("keydown", ccDelimiter);
+    input().setAttribute('size', 'auto');
   });
 
   beforeEach(function() {
@@ -156,17 +151,12 @@ describe('Product code input', function() {
       DelimitedInput.ltr));
 
   before(function() {
-    document
-        .getElementById("num")
-        .addEventListener("keydown", ccDelimiter);
-    document
-        .getElementById("num").style.textAlign = 'left';
+    input().addEventListener("keydown", ccDelimiter);
+    input().style.textAlign = 'left';
   });
 
   after(function() {
-    document
-        .getElementById("num")
-        .removeEventListener("keydown", ccDelimiter);
+    input().removeEventListener("keydown", ccDelimiter);
   });
 
   beforeEach(function() {
@@ -349,15 +339,11 @@ describe('Creditcard input', function() {
       DelimitedInput.ltr));
 
   before(function() {
-    document
-        .getElementById("num")
-        .addEventListener("keydown", ccDelimiter);
+    input().addEventListener("keydown", ccDelimiter);
   });
 
   after(function() {
-    document
-        .getElementById("num")
-        .removeEventListener("keydown", ccDelimiter);
+    input().removeEventListener("keydown", ccDelimiter);
   });
 
   beforeEach(function() {
@@ -380,15 +366,11 @@ describe('Number input', function() {
       DelimitedInput.rtl));
 
   before(function() {
-    document
-        .getElementById("num")
-        .addEventListener("keydown", thousandDelimiter);
+    input().addEventListener("keydown", thousandDelimiter);
   });
 
   after(function() {
-    document
-        .getElementById("num")
-        .removeEventListener("keydown", thousandDelimiter);
+    input().removeEventListener("keydown", thousandDelimiter);
   });
 
   beforeEach(function() {
