@@ -1,4 +1,4 @@
-function DelimitedInput(separator, spread, direction, prefill) {
+function DelimitedInput(separator, spread, direction, prefill, overwrite) {
   if (typeof(separator) !== 'string' || separator.length !== 1) {
     throw new Error('Delimiter must be a single character string, got ' +
         typeof(separator) + ' "' + separator + '"');
@@ -18,14 +18,15 @@ function DelimitedInput(separator, spread, direction, prefill) {
 
       const selectionLength = el.selectionEnd - el.selectionStart;
 
-      if (el.value.length >= el.size && selectionLength === 0) {
+      if ((el.value.length >= el.size && selectionLength === 0 && !overwrite) ||
+          (priorPosition >= el.size && overwrite)) {
         return; // after preventDefault() to avoid changing input value
       }
 
       const value = DelimitedInput.subtract(
           el.value, el.selectionStart, el.selectionEnd);
 
-      const nextValue = format(DelimitedInput.inject(value, event.shiftKey ? key : key.toLowerCase(), priorPosition));
+      const nextValue = format(DelimitedInput.inject(value, event.shiftKey ? key : key.toLowerCase(), priorPosition, overwrite));
       const predict = (prefill && nextValue.length < el.size && (nextValue.length + 1) % segmentLength == 0) ? separator : "";
 
       el.value = nextValue + predict;
@@ -79,9 +80,9 @@ DelimitedInput.strip = function(string) {
   return string.replace(/[^A-z0-9]/g, '');
 };
 
-DelimitedInput.inject = function(string, character, positionFromLeft) {
+DelimitedInput.inject = function(string, character, positionFromLeft, overwrite) {
   return string.slice(0, positionFromLeft) +
-      character + string.slice(positionFromLeft);
+      character + string.slice(positionFromLeft + (overwrite ? 1 : 0));
 };
 
 DelimitedInput.subtract = function(string, start, end) {

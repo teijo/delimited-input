@@ -106,6 +106,51 @@ describe('Prefill', function() {
   });
 });
 
+describe('Overwrite input', function() {
+  const ccDelimiter = captureResult(DelimitedInput("-", 2,
+      DelimitedInput.ltr, false, true));
+
+  before(function() {
+    input().addEventListener("keydown", ccDelimiter);
+    input().size = '5';
+  });
+
+  after(function() {
+    input().removeEventListener("keydown", ccDelimiter);
+    input().setAttribute('size', 'auto');
+  });
+
+  beforeEach(function() {
+    input().value = '12-34';
+  });
+
+  it('starts with "12-34"', function() {
+    assert.equal(value(), '12-34');
+  });
+
+  describe('entering "x" before "3"', function() {
+    beforeEach(function() {
+      caret(3);
+      kb.dispatchEventsForInput('x', input());
+    });
+
+    it('outputs "12-x4"', function() {
+      assert.equal(value(), '12-x4');
+    });
+  });
+
+  describe('entering "x" after last character', function() {
+    beforeEach(function() {
+      caret(value().length);
+      kb.dispatchEventsForInput('x', input());
+    });
+
+    it('does nothing', function() {
+      assert.equal(value(), '12-34');
+    });
+  });
+});
+
 describe('Restricted input size', function() {
   const ccDelimiter = captureResult(DelimitedInput("-", 2,
       DelimitedInput.ltr));

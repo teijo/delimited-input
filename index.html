@@ -45,7 +45,7 @@
   .addEventListener("keydown", DelimitedInput(" ", 4, DelimitedInput.ltr));
 </script>
 
-<h2>Product code</h2>
+<h2>Product code with overwrite</h2>
 <input id="product_code" type="text" size="14" style="text-align: center" value="abj3-9lv2-jvk3"/>
 <pre>
 &lt;input id="product_code" type="text" size="14"
@@ -54,7 +54,8 @@
 </pre>
 <script class="demo">document
   .getElementById("product_code")
-  .addEventListener("keydown", DelimitedInput("-", 4, DelimitedInput.ltr));
+  .addEventListener("keydown",
+      DelimitedInput("-", 4, DelimitedInput.ltr, false, true));
 </script>
 
 <h2>MAC address with separator prefill</h2>
