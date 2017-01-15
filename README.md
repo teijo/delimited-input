@@ -37,7 +37,7 @@ document
 ## Installing
 
 ```
-npm install delimited-input
+npm install --save delimited-input
 ```
 
 
