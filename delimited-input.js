@@ -120,3 +120,16 @@ DelimitedInput.backspace = function(el, separator, direction) {
         selEnd)
   };
 };
+
+// Export functionality, sampled from baconjs <3
+if ((typeof define !== "undefined" && define !== null) && (define.amd != null)) {
+  define([], function() { return DelimitedInput; });
+  if (typeof this !== "undefined" && this !== null) {
+    this.DelimitedInput = DelimitedInput;
+  }
+} else if ((typeof module !== "undefined" && module !== null) && (module.exports != null)) {
+  module.exports = DelimitedInput; // for DelimitedInput = require 'delimited-input'
+  DelimitedInput.DelimitedInput = DelimitedInput; // for {DelimitedInput} = require 'delimited-input'
+} else {
+  this.DelimitedInput = DelimitedInput; // otherwise for execution context
+}

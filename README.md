@@ -33,6 +33,19 @@ document
   .addEventListener("keydown", thousandsDelimiter);
 ```
 
+### Node
+
+```javascript
+var DelimitedInput = require("./delimited-input");
+```
+
+### RequireJS
+
+```javascript
+requirejs(["delimited-input"], function(DelimitedInput) {
+  /*...*/
+});
+```
 
 ## Installing
 
