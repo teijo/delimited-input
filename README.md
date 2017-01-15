@@ -36,7 +36,7 @@ document
 ### Node
 
 ```javascript
-var DelimitedInput = require("./delimited-input");
+var DelimitedInput = require("delimited-input");
 ```
 
 ### RequireJS
