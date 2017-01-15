@@ -1,4 +1,4 @@
-function DelimitedInput(separator, spread, direction, prefill, overwrite) {
+function DelimitedInput(separator, spread, direction, prefill, overwrite, eraseCharacter) {
   if (typeof(separator) !== 'string' || separator.length !== 1) {
     throw new Error('Delimiter must be a single character string, got ' +
         typeof(separator) + ' "' + separator + '"');
@@ -45,7 +45,7 @@ function DelimitedInput(separator, spread, direction, prefill, overwrite) {
       }
     } else if (event.keyCode === 8) {
       event.preventDefault();
-      const result = DelimitedInput.backspace(el, separator, direction);
+      const result = DelimitedInput.backspace(el, separator, direction, eraseCharacter);
       const newValue = format(result.value);
       el.value = newValue;
       el.selectionStart = el.selectionEnd = (direction === DelimitedInput.ltr)
@@ -92,7 +92,7 @@ DelimitedInput.subtract = function(string, start, end) {
   return head + tail;
 };
 
-DelimitedInput.backspace = function(el, separator, direction) {
+DelimitedInput.backspace = function(el, separator, direction, eraseCharacter) {
   const value = el.value;
 
   const selStart = el.selectionStart;
@@ -108,16 +108,20 @@ DelimitedInput.backspace = function(el, separator, direction) {
 
   // In LTR at most additional separator is removed, delimiters may change on
   // right hand side of the cursor
-  const positionFromStart = selStart - (cursorRightOfSeparator ? 2 : 1);
+  const positionFromStart = Math.max(0, selStart - (cursorRightOfSeparator ? 2 : 1));
+
+  const modifiedValue = this.subtract(value, cursorPosition - (cursorRightOfSeparator
+          // Erase char before separator if cursor right after of separator
+          ? separator.length
+          : 0),
+      selEnd);
 
   return {
     positionFromEnd: positionFromEnd,
     positionFromStart: positionFromStart,
-    value: this.subtract(value, cursorPosition - (cursorRightOfSeparator
-            // Erase char before separator if cursor right after of separator
-            ? separator.length
-            : 0),
-        selEnd)
+    value: (eraseCharacter && selStart > 0)
+        ? this.inject(modifiedValue, eraseCharacter, positionFromStart, false)
+        : modifiedValue
   };
 };
 

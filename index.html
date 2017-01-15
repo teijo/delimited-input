@@ -69,5 +69,18 @@
     .getElementById("mac")
     .addEventListener("keydown", DelimitedInput(":", 2, DelimitedInput.ltr, true));
 </script>
+
+
+<h2>Erase placeholder demo</h2>
+<input id="erase" type="text" size="7" style="text-align: center" value="???-???"/>
+<pre>
+&lt;input id="product_code" type="text" size="7"
+       value="???-???"/&gt;
+</pre>
+<script class="demo">document
+    .getElementById("erase")
+    .addEventListener("keydown", DelimitedInput("-", 3, DelimitedInput.ltr,
+        false, true, '?'));
+</script>
 </body>
 </html>

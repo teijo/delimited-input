@@ -33,6 +33,82 @@ const captureResult = function(func) {
   };
 };
 
+describe('Erase using "?" at "xxx-xxx"', function() {
+  const listener = captureResult(DelimitedInput("-", 3,
+      DelimitedInput.ltr, false, true, '?'));
+
+  before(function() {
+    input().addEventListener("keydown", listener);
+    input().size = '7';
+  });
+
+  after(function() {
+    input().removeEventListener("keydown", listener);
+    input().setAttribute('size', 'auto');
+  });
+
+  beforeEach(function() {
+    input().value = 'xxx-xxx';
+  });
+
+  describe('after first "x"', function() {
+    beforeEach(function() {
+      caret(1);
+      kb.dispatchEventsForAction('backspace', input());
+    });
+
+    it('results into "?xx-xxx"', function() {
+      assert.equal(value(), '?xx-xxx');
+    });
+
+    it('selection is at the beginning', function() {
+      assert.equal(0, input().selectionStart);
+    });
+
+    it('selection length is zero', function() {
+      assert.equal(input().selectionStart, input().selectionEnd);
+    });
+  });
+
+  describe('after separator', function() {
+    beforeEach(function() {
+      caret(4);
+      kb.dispatchEventsForAction('backspace', input());
+    });
+
+    it('results into "xx?-xxx"', function() {
+      assert.equal(value(), 'xx?-xxx');
+    });
+
+    it('selection is after second "x"', function() {
+      assert.equal(2, input().selectionStart);
+    });
+
+    it('selection length is zero', function() {
+      assert.equal(input().selectionStart, input().selectionEnd);
+    });
+  });
+
+  describe('at the beginning', function() {
+    beforeEach(function() {
+      caret(0);
+      kb.dispatchEventsForAction('backspace', input());
+    });
+
+    it('does not change input', function() {
+      assert.equal(value(), 'xxx-xxx');
+    });
+
+    it('selection stays at the beginning', function() {
+      assert.equal(0, input().selectionStart);
+    });
+
+    it('selection length is zero', function() {
+      assert.equal(input().selectionStart, input().selectionEnd);
+    });
+  });
+});
+
 describe('Prefill', function() {
   const listener = captureResult(DelimitedInput(":", 2,
       DelimitedInput.ltr, true));
