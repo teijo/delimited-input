@@ -34,6 +34,13 @@ document
 ```
 
 
+## Installing
+
+```
+npm install delimited-input
+```
+
+
 ## Development
 
 ```
